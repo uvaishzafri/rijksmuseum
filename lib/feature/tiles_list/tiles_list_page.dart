@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rijksmuseum/bloc/tiles_list_bloc.dart';
 import 'package:rijksmuseum/bloc/tiles_list_event.dart';
 import 'package:rijksmuseum/bloc/tiles_list_state.dart';
+import 'package:rijksmuseum/feature/tiles_list/widgets/error_widget.dart';
 import 'package:rijksmuseum/models/tile_model.dart';
 import 'package:rijksmuseum/theme/app_theme.dart';
 import 'package:rijksmuseum/feature/tiles_list/widgets/tile_list.dart';
@@ -35,7 +36,6 @@ class _TileListPageState extends State<TileListPage> {
       BlocProvider.of<TilesListBloc>(context).add(LoadMoreTiles());
     }
   }
-
 
   @override
   void dispose() {
@@ -160,7 +160,9 @@ class _TileListPageState extends State<TileListPage> {
             ),
           ),
           BlocBuilder<TilesListBloc, TilesState>(builder: (_, tilesState) {
-            if (tilesState is TilesLoaded) {
+            if (tilesState is TilesLoading) {
+              return const Expanded(child: Center(child: CircularProgressIndicator()));
+            } else if (tilesState is TilesLoaded) {
               List<TileModel> tiles = tilesState.tiles;
               return Expanded(
                 child: TilesList(
@@ -168,8 +170,15 @@ class _TileListPageState extends State<TileListPage> {
                   scrollController: _scrollController,
                 ),
               );
+            } else if (tilesState is TilesError) {
+              return ErrorDisplayWidget(
+                errorMessage: tilesState.message,
+                onRetry: () {
+                  BlocProvider.of<TilesListBloc>(context).add(LoadTiles(query: textController!.text.trim()));
+                },
+              );
             }
-            return const Expanded(child: Center(child: CircularProgressIndicator()));
+            return Container();
           })
         ],
       ),

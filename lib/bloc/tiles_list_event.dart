@@ -6,8 +6,6 @@ class LoadTiles extends TilesEvent {
   LoadTiles({required this.query});
 }
 
-class LoadMoreTiles extends TilesEvent{
-
-}
+class LoadMoreTiles extends TilesEvent {}
 
 class ToggleView extends TilesEvent {}

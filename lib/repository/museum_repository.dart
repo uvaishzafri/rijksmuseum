@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:rijksmuseum/models/tile_model.dart';
+import 'package:rijksmuseum/repository/network_exceptions.dart';
 
 class MuseumRepository {
   final HttpClient httpClient;
@@ -21,10 +22,12 @@ class MuseumRepository {
         tiles.removeWhere((element) => element.headerImageUrl == "" || element.webImageUrl == "");
         return tiles;
       } else {
-        throw Exception('Failed to load tiles');
+        throw FetchDataException('Error occurred while Communication with Server with StatusCode : ${response.statusCode}');
       }
+    } on SocketException {
+      throw NetworkException('No Internet connection');
     } catch (e) {
-      throw Exception('Failed to load tiles: $e');
+      throw FetchDataException('Error occurred: $e');
     }
   }
 }
