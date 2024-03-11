@@ -16,6 +16,7 @@ class TileListPage extends StatefulWidget {
 }
 
 class _TileListPageState extends State<TileListPage> {
+  final ScrollController _scrollController = ScrollController();
   TextEditingController? textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSearchStarted = false;
@@ -25,7 +26,22 @@ class _TileListPageState extends State<TileListPage> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     textController = TextEditingController();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      BlocProvider.of<TilesListBloc>(context).add(LoadMoreTiles());
+    }
+  }
+
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    textController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,7 +93,7 @@ class _TileListPageState extends State<TileListPage> {
                           child: Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                               child: BlocBuilder<TilesListBloc, TilesState>(
-                                  bloc: context.read<TilesListBloc>()..add(LoadTiles()),
+                                  bloc: context.read<TilesListBloc>()..add(LoadTiles(query: '')),
                                   builder: (_, tilesState) {
                                     List<TileModel> tiles = [];
                                     if (tilesState is TilesLoaded) tiles = tilesState.tiles;
@@ -85,18 +101,11 @@ class _TileListPageState extends State<TileListPage> {
                                       controller: textController,
                                       obscureText: false,
                                       onChanged: (_) => EasyDebounce.debounce(
-                                        'tFMemberController',
-                                        const Duration(milliseconds: 0),
-                                        () {
-                                          isSearchStarted = textController!.text.isNotEmpty && textController!.text.trim().isNotEmpty;
-                                          if (isSearchStarted) {
-                                            searchedProducts = tiles
-                                                .where(
-                                                    (item) => item.title.toLowerCase().contains(textController!.text.trim().toLowerCase()))
-                                                .toList();
-                                          }
-                                          setState(() {});
-                                        },
+                                        'searchTilesDebounce', // Ensure this key is unique for this debounce
+                                        const Duration(milliseconds: 500), // 500ms is a common choice for UI input
+                                        () => BlocProvider.of<TilesListBloc>(context).add(
+                                          LoadTiles(query: textController!.text.trim()), // Trigger search with current text
+                                        ),
                                       ),
                                       decoration: const InputDecoration(
                                         labelText: 'Search product here...',
@@ -152,18 +161,18 @@ class _TileListPageState extends State<TileListPage> {
               ],
             ),
           ),
-          BlocBuilder<TilesListBloc, TilesState>(
-              builder: (_, tilesState) {
-                if (tilesState is TilesLoaded) {
-                  List<TileModel> tiles = tilesState.tiles;
-                  return Expanded(
-                    child: TilesList(
-                      tiles: isSearchStarted ? searchedProducts : tiles,
-                    ),
-                  );
-                }
-                return const CircularProgressIndicator();
-              })
+          BlocBuilder<TilesListBloc, TilesState>(builder: (_, tilesState) {
+            if (tilesState is TilesLoaded) {
+              List<TileModel> tiles = tilesState.tiles;
+              return Expanded(
+                child: TilesList(
+                  tiles: isSearchStarted ? searchedProducts : tiles,
+                  scrollController: _scrollController,
+                ),
+              );
+            }
+            return const CircularProgressIndicator();
+          })
         ],
       ),
     );

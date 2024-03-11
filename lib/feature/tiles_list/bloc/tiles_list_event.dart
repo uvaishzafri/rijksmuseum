@@ -1,11 +1,13 @@
 abstract class TilesEvent {}
 
-class LoadTiles extends TilesEvent {}
+class LoadTiles extends TilesEvent {
+  String query;
 
-class LoadTileDetails extends TilesEvent {
-  final int id;
+  LoadTiles({required this.query});
+}
 
-  LoadTileDetails(this.id);
+class LoadMoreTiles extends TilesEvent{
+
 }
 
 class ToggleView extends TilesEvent {}
