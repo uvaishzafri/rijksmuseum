@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_event.dart';
-import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_state.dart';
+import 'package:rijksmuseum/bloc/tiles_list_event.dart';
+import 'package:rijksmuseum/bloc/tiles_list_state.dart';
 import 'package:rijksmuseum/repository/api_repository.dart';
 
 class TilesListBloc extends Bloc<TilesEvent, TilesState> {

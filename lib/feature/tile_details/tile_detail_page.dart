@@ -2,23 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rijksmuseum/models/tile_model.dart';
 import 'package:rijksmuseum/theme/app_theme.dart';
 
-class TileDetailPage extends StatefulWidget {
-  const TileDetailPage({Key? key, required this.tile}) : super(key: key);
+class TileDetailPage extends StatelessWidget {
+  TileDetailPage({Key? key, required this.tile}) : super(key: key);
 
   final TileModel tile;
 
-  @override
-  _TileDetailPageState createState() => _TileDetailPageState();
-}
-
-class _TileDetailPageState extends State<TileDetailPage> with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  int? countControllerValue;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +27,13 @@ class _TileDetailPageState extends State<TileDetailPage> with TickerProviderStat
           ),
         ),
         title: Text(
-          ' ${widget.tile.title}',
+          ' ${tile.title}',
           style: AppTheme.of(context).subtitle2.override(
-            fontFamily: 'Lexend Deca',
-            color: const Color(0xFF151B1E),
-            fontSize: 26,
-            fontWeight: FontWeight.w500,
-          ),
+                fontFamily: 'Lexend Deca',
+                color: const Color(0xFF151B1E),
+                fontSize: 26,
+                fontWeight: FontWeight.w500,
+              ),
         ),
         centerTitle: true,
         elevation: 0,
@@ -55,50 +44,52 @@ class _TileDetailPageState extends State<TileDetailPage> with TickerProviderStat
         children: [
           Expanded(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                    child: Hero(
-                      tag: 'mainImage',
-                      transitionOnUserGestures: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          widget.tile.headerImageUrl,
-                          width: double.infinity,
-                          height: 300,
-                          fit: BoxFit.cover,
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Hero(
+                        tag: 'mainImage',
+                        child: Image.network(tile.headerImageUrl, fit: BoxFit.cover),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(tile.longTitle, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 10),
+                            Text('By ${tile.maker}',
+                                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.deepPurple)),
+                            const Divider(color: Colors.grey),
+                            Text('Price: \$${tile.price}', style: const TextStyle(fontSize: 18)),
+                            const SizedBox(height: 10),
+                            if (tile.productionPlaces.isNotEmpty) ...{
+                              const Text('Production Places:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            },
+                            Wrap(
+                              spacing: 8.0,
+                              children: tile.productionPlaces
+                                  .map((place) => Chip(
+                                        label: Text(place),
+                                        backgroundColor: Colors.deepPurple.withOpacity(0.5),
+                                      ))
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 20),
+                            tile.webImageUrl.isNotEmpty
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(tile.webImageUrl, fit: BoxFit.cover),
+                                  )
+                                : Container(),
+                          ],
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                    child: Text(
-                      'Detailed Product',
-                      style: AppTheme.of(context).title1,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 4, 0, 0),
-                    child: Text(
-                      '\$${widget.tile.price}',
-                      textAlign: TextAlign.start,
-                      style: AppTheme.of(context).subtitle1,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 8),
-                    child: Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do.',
-                      style: AppTheme.of(context).bodyText2,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ]),
             ),
           ),
         ],

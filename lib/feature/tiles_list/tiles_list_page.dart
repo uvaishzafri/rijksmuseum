@@ -1,11 +1,11 @@
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rijksmuseum/bloc/tiles_list_bloc.dart';
+import 'package:rijksmuseum/bloc/tiles_list_event.dart';
+import 'package:rijksmuseum/bloc/tiles_list_state.dart';
 import 'package:rijksmuseum/models/tile_model.dart';
 import 'package:rijksmuseum/theme/app_theme.dart';
-import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_bloc.dart';
-import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_event.dart';
-import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_state.dart';
 import 'package:rijksmuseum/feature/tiles_list/widgets/tile_list.dart';
 
 class TileListPage extends StatefulWidget {
@@ -95,8 +95,6 @@ class _TileListPageState extends State<TileListPage> {
                               child: BlocBuilder<TilesListBloc, TilesState>(
                                   bloc: context.read<TilesListBloc>()..add(LoadTiles(query: '')),
                                   builder: (_, tilesState) {
-                                    List<TileModel> tiles = [];
-                                    if (tilesState is TilesLoaded) tiles = tilesState.tiles;
                                     return TextFormField(
                                       controller: textController,
                                       obscureText: false,
@@ -171,7 +169,7 @@ class _TileListPageState extends State<TileListPage> {
                 ),
               );
             }
-            return const CircularProgressIndicator();
+            return const Expanded(child: Center(child: CircularProgressIndicator()));
           })
         ],
       ),

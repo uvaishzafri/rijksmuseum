@@ -12,6 +12,7 @@ class Api {
       if (response.statusCode == 200) {
         dynamic body = jsonDecode(response.body);
         List<TileModel> tiles = List<TileModel>.from(body["artObjects"].map((dynamic item) => TileModel.fromJson(item)).toList());
+        tiles.removeWhere((element) => element.headerImageUrl == "" || element.webImageUrl == "");
         return tiles;
       } else {
         throw Exception('Failed to load tiles');
