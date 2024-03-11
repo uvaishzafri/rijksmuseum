@@ -1,20 +1,21 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:rijksmuseum/app_theme.dart';
-import 'package:rijksmuseum/tile_details/tile_detail_page.dart';
-import 'package:rijksmuseum/tiles_list/models/tile_model.dart';
+import 'package:rijksmuseum/models/tile_model.dart';
+import 'package:rijksmuseum/theme/app_theme.dart';
+import 'package:rijksmuseum/feature/tile_details/tile_detail_page.dart';
 
 class TileAnimation extends StatelessWidget {
   final int itemNo;
   final TileModel tile;
+  final bool isGridView;
 
-  const TileAnimation({super.key, this.itemNo = 0, required this.tile});
+  const TileAnimation({super.key, this.itemNo = 0, required this.tile, required this.isGridView});
 
   @override
   Widget build(BuildContext context) {
     ContainerTransitionType transitionType = ContainerTransitionType.fade;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: OpenContainer<bool>(
         transitionType: transitionType,
         openBuilder: (BuildContext _, VoidCallback openContainer) {
@@ -55,7 +56,7 @@ class TileAnimation extends StatelessWidget {
                             topRight: Radius.circular(8),
                           ),
                           child: Image.network(
-                            tile.imageUrl,
+                            isGridView ? tile.webImageUrl : tile.headerImageUrl,
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -65,18 +66,12 @@ class TileAnimation extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 0, 0),
-                          child: Text(
-                            tile.name,
-                            style: AppTheme.of(context).bodyText1,
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 0, 0),
+                    child: Text(
+                      tile.title,
+                      softWrap: false,
+                      style: AppTheme.of(context).bodyText1,
+                      overflow: TextOverflow.ellipsis, // Recommended for handling overflow visually
                     ),
                   ),
                   Padding(

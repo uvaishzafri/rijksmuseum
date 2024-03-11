@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rijksmuseum/feature/tiles_list/bloc/tiles_list_bloc.dart';
+import 'package:rijksmuseum/feature/tiles_list/tiles_list_page.dart';
 import 'package:rijksmuseum/repository/api_repository.dart';
-import 'package:rijksmuseum/tiles_list/bloc/tiles_list_bloc.dart';
-import 'package:rijksmuseum/tiles_list/tiles_list_page.dart';
 
 void main() {
   runApp(const MyApp());
