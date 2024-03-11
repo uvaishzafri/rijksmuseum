@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rijksmuseum/bloc/tiles_list_event.dart';
 import 'package:rijksmuseum/bloc/tiles_list_state.dart';
-import 'package:rijksmuseum/repository/api_repository.dart';
+import 'package:rijksmuseum/repository/museum_repository.dart';
 
 class TilesListBloc extends Bloc<TilesEvent, TilesState> {
-  final Api api;
+  final MuseumRepository api;
   bool isGridView = true; // Default view
   int currentPage = 0;
   bool hasMore = true; // Assuming there's more data initially
@@ -19,7 +19,6 @@ class TilesListBloc extends Bloc<TilesEvent, TilesState> {
       emit(TilesLoading());
       try {
         final tiles = await api.fetchTiles(p: currentPage, ps: pageSize, q: currentQuery);
-
         emit(TilesLoaded(tiles));
       } catch (e) {
         emit(TilesError(e.toString()));

@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rijksmuseum/bloc/tiles_list_bloc.dart';
 import 'package:rijksmuseum/feature/tiles_list/tiles_list_page.dart';
-import 'package:rijksmuseum/repository/api_repository.dart';
+import 'package:rijksmuseum/repository/museum_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,12 +12,13 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<TilesListBloc>(
-          create: (BuildContext context) => TilesListBloc(Api()),
+          create: (BuildContext context) => TilesListBloc(MuseumRepository(httpClient: HttpClient())),
         ),
       ],
       child: MaterialApp(
